@@ -1,0 +1,56 @@
+grammar Postfix $
+
+s returns [double val]
+    # t[initArrayList()]
+    {
+        val = _0.val.get(0);
+    }
+    # EPS
+    {
+        val = 0;
+    }
+    $
+
+t [List<Double> val1] returns [List<Double> val]
+    # N f[addAndReturn(val1,Double.parseDouble(_0.text))]
+    {
+        val = val1;
+    }
+    $
+
+f [List<Double> val1] returns [double val]
+    # t[val1] op[String.valueOf(_0.val.get(_0.val.size()-2))+"\n"+String.valueOf(_0.val.get(_0.val.size()-1))] f[delAddAndReturn(_1.val,_0.val)]
+    {
+        val = _2.val;
+    }
+    # EPS
+    {
+        val = val1.get(val1.size() - 1);
+    }
+    $
+
+op [String s] returns [double val]
+    # ADD
+    {
+        val = Double.parseDouble(s.substring(0, s.indexOf("\n"))) + Double.parseDouble(s.substring(s.indexOf("\n") + 1));
+    }
+    # SUB
+    {
+        val = Double.parseDouble(s.substring(0, s.indexOf("\n"))) - Double.parseDouble(s.substring(s.indexOf("\n") + 1));
+    }
+    # DIV
+    {
+        val = Double.parseDouble(s.substring(0, s.indexOf("\n"))) / Double.parseDouble(s.substring(s.indexOf("\n") + 1));
+    }
+    # MUL
+    {
+        val = Double.parseDouble(s.substring(0, s.indexOf("\n"))) * Double.parseDouble(s.substring(s.indexOf("\n") + 1));
+    }
+    $
+
+ADD : ('[+]') $
+SUB : ('[-]') $
+DIV : ('[/]') $
+MUL : ('[*]') $
+N : ('\d+') $
+SKIP : ('[ \t\r\n]') -> skip $
